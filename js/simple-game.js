@@ -99,6 +99,9 @@ class SimpleGameEngine {
         // Инициализируем отображение уровня розыска
         this.updateWantedDisplay();
 
+        // Инициализируем миникарту
+        this.initMinimap();
+
         // Скрываем инструкции через 10 секунд
         setTimeout(() => {
             const controlsHelp = document.getElementById('controlsHelp');
@@ -4425,6 +4428,9 @@ class SimpleGameEngine {
             // Обновляем NPC и машины (с оптимизацией)
             this.updateEntities();
             
+            // Обновляем миникарту
+            this.updateMinimap();
+            
             this.renderer.render(this.scene, this.camera);
         };
         
@@ -4639,6 +4645,141 @@ class SimpleGameEngine {
         
         const animations = gender === 'female' ? femaleAnimations : maleAnimations;
         return animations[Math.floor(Math.random() * animations.length)];
+    }
+
+    initMinimap() {
+        const minimapContainer = document.querySelector('.minimap');
+        if (!minimapContainer) return;
+
+        // Создаем canvas для миникарты
+        this.minimapCanvas = document.createElement('canvas');
+        this.minimapCanvas.width = 200;
+        this.minimapCanvas.height = 200;
+        this.minimapCanvas.style.width = '100%';
+        this.minimapCanvas.style.height = '100%';
+        this.minimapCanvas.style.borderRadius = '50%';
+        minimapContainer.appendChild(this.minimapCanvas);
+        
+        this.minimapCtx = this.minimapCanvas.getContext('2d');
+    }
+
+    updateMinimap() {
+        if (!this.minimapCtx || !this.player) return;
+
+        const ctx = this.minimapCtx;
+        const width = this.minimapCanvas.width;
+        const height = this.minimapCanvas.height;
+        const centerX = width / 2;
+        const centerY = height / 2;
+        
+        // Масштаб миникарты (сколько метров мира в одном пикселе)
+        const scale = 2.0; // Увеличиваем масштаб, чтобы видеть больше
+        
+        // Позиция игрока
+        const playerPos = this.drivingVehicle ? this.drivingVehicle.group.position : this.player.group.position;
+        const playerRot = this.drivingVehicle ? this.drivingVehicle.group.rotation.y : this.player.group.rotation.y;
+
+        // Очищаем карту
+        ctx.clearRect(0, 0, width, height);
+        
+        // Фон карты
+        ctx.fillStyle = 'rgba(20, 20, 20, 0.8)'; // Более темный и непрозрачный фон
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, width/2, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // Ограничиваем область рисования кругом
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, width/2, 0, Math.PI * 2);
+        ctx.clip();
+
+        // Рисуем дороги
+        if (this.roadSegments) {
+            ctx.strokeStyle = '#AAAAAA'; // Светло-серые дороги
+            ctx.lineWidth = 12 / scale; // Чуть шире
+            
+            this.roadSegments.forEach(road => {
+                // Переводим координаты мира в координаты карты относительно игрока
+                const x1 = centerX + (road.start.x - playerPos.x) / scale;
+                const y1 = centerY + (road.start.z - playerPos.z) / scale;
+                const x2 = centerX + (road.end.x - playerPos.x) / scale;
+                const y2 = centerY + (road.end.z - playerPos.z) / scale;
+                
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.stroke();
+            });
+        }
+
+        // Рисуем здания (упрощенно)
+        if (this.buildings) {
+            ctx.fillStyle = '#666666'; // Серые здания (светлее фона)
+            this.buildings.forEach(building => {
+                if (!building.group) return;
+                const x = centerX + (building.group.position.x - playerPos.x) / scale;
+                const y = centerY + (building.group.position.z - playerPos.z) / scale;
+                // Размер здания примерно 20x20
+                const size = 20 / scale;
+                ctx.fillRect(x - size/2, y - size/2, size, size);
+            });
+        }
+
+        // Рисуем врагов (полиция)
+        if (this.policeCars) {
+            ctx.fillStyle = '#ff0000';
+            this.policeCars.forEach(police => {
+                if (!police.group) return;
+                const x = centerX + (police.group.position.x - playerPos.x) / scale;
+                const y = centerY + (police.group.position.z - playerPos.z) / scale;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 3, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        // Рисуем танки
+        if (this.tanks) {
+            ctx.fillStyle = '#8B0000'; // Темно-красный
+            this.tanks.forEach(tank => {
+                if (!tank.group) return;
+                const x = centerX + (tank.group.position.x - playerPos.x) / scale;
+                const y = centerY + (tank.group.position.z - playerPos.z) / scale;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+
+        // Рисуем игрока (центр)
+        ctx.fillStyle = '#00ff00'; // Зеленый
+        ctx.save();
+        ctx.translate(centerX, centerY);
+        ctx.rotate(playerRot); // Поворачиваем стрелку игрока
+        
+        // Рисуем стрелку
+        ctx.beginPath();
+        ctx.moveTo(0, -5);
+        ctx.lineTo(4, 5);
+        ctx.lineTo(0, 3);
+        ctx.lineTo(-4, 5);
+        ctx.closePath();
+        ctx.fill();
+        
+        ctx.restore();
+        
+        // Восстанавливаем clip
+        ctx.restore();
+        
+        // Рамка
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, width/2 - 1, 0, Math.PI * 2);
+        ctx.stroke();
     }
 }
 

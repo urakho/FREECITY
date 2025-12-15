@@ -1,0 +1,418 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue:wght@400;700&family=Orbitron:wght@400;700;900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Orbitron', monospace;
+    overflow: hidden;
+    background: #000;
+    color: white;
+}
+
+/* Главное меню */
+.menu-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d30 50%, #1a1a1a 100%);
+    z-index: 1000;
+}
+
+.menu-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255, 69, 0, 0.1) 0%, transparent 50%),
+        linear-gradient(45deg, rgba(0, 0, 0, 0.8) 0%, rgba(30, 30, 30, 0.9) 100%);
+    animation: backgroundPulse 8s ease-in-out infinite;
+}
+
+@keyframes backgroundPulse {
+    0%, 100% { opacity: 0.8; }
+    50% { opacity: 1; }
+}
+
+.menu-content {
+    text-align: center;
+    z-index: 1001;
+}
+
+.game-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 4.5rem;
+    font-weight: 700;
+    color: #FFD700;
+    text-shadow: 
+        0 0 10px rgba(255, 215, 0, 0.5),
+        0 0 20px rgba(255, 215, 0, 0.3),
+        2px 2px 4px rgba(0, 0, 0, 0.8);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.2em;
+    animation: titleGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+    0% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.3), 2px 2px 4px rgba(0, 0, 0, 0.8); }
+    100% { text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.5), 2px 2px 4px rgba(0, 0, 0, 0.8); }
+}
+
+.game-subtitle {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    color: #FF4500;
+    text-shadow: 0 0 8px rgba(255, 69, 0, 0.6);
+    margin-bottom: 3rem;
+    letter-spacing: 0.3em;
+}
+
+.menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.menu-btn {
+    background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+    border: 2px solid #FFD700;
+    color: #FFD700;
+    font-family: 'Orbitron', monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding: 1rem 3rem;
+    min-width: 250px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    box-shadow: 
+        0 4px 8px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.menu-btn:hover {
+    background: linear-gradient(145deg, #FFD700, #FFA500);
+    color: #000;
+    border-color: #FFA500;
+    box-shadow: 
+        0 6px 12px rgba(255, 215, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.menu-btn:active {
+    transform: translateY(0);
+    box-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Игровой экран */
+.game-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#gameCanvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* HUD элементы */
+.hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 100;
+}
+
+.minimap {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 200px;
+    height: 200px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #FFD700;
+    border-radius: 10px;
+}
+
+.health-bar {
+    position: absolute;
+    bottom: 50px;
+    left: 20px;
+    width: 200px;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #FFD700;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.health-fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00);
+    transition: width 0.3s ease;
+}
+
+.money {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-family: 'Orbitron', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #00FF00;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
+}
+
+.wanted-level {
+    position: absolute;
+    top: 70px;
+    left: 20px;
+    font-size: 1.5rem;
+    color: #FF4500;
+    text-shadow: 0 0 10px rgba(255, 69, 0, 0.8);
+}
+
+.fps-display {
+    position: absolute;
+    top: 20px;
+    right: 240px;
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #00FF00;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.8);
+    background: rgba(0, 0, 0, 0.5);
+    padding: 5px 10px;
+    border-radius: 3px;
+}
+
+.quality-toggle {
+    position: absolute;
+    top: 60px;
+    right: 240px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #FFD700;
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid #FFD700;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.quality-toggle:hover {
+    background: rgba(255, 215, 0, 0.2);
+    transform: scale(1.05);
+}
+
+/* Меню паузы */
+.pause-menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+}
+
+.pause-content {
+    text-align: center;
+    background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+    padding: 3rem;
+    border-radius: 15px;
+    border: 2px solid #FFD700;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+}
+
+.pause-content h2 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 3rem;
+    color: #FFD700;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.pause-btn {
+    background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+    border: 2px solid #FFD700;
+    color: #FFD700;
+    font-family: 'Orbitron', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.8rem 2rem;
+    margin: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    min-width: 200px;
+}
+
+.pause-btn:hover {
+    background: linear-gradient(145deg, #FFD700, #FFA500);
+    color: #000;
+    border-color: #FFA500;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+}
+
+/* Экран загрузки */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #000 0%, #1a1a1a 50%, #000 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1500;
+}
+
+.loading-content {
+    text-align: center;
+    max-width: 600px;
+    width: 90%;
+}
+
+.loading-content h2 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 3rem;
+    color: #FFD700;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+    animation: loadingPulse 2s ease-in-out infinite;
+}
+
+@keyframes loadingPulse {
+    0%, 100% { opacity: 0.7; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.05); }
+}
+
+.loading-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #FFD700;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.loading-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #FFD700, #FFA500, #FF4500);
+    width: 0%;
+    transition: width 0.5s ease;
+    animation: progressGlow 2s ease-in-out infinite;
+}
+
+@keyframes progressGlow {
+    0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+}
+
+.loading-text {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.2rem;
+    color: #FFA500;
+    text-shadow: 0 0 8px rgba(255, 165, 0, 0.6);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .game-title {
+        font-size: 3rem;
+    }
+    
+    .game-subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .menu-btn {
+        font-size: 1rem;
+        padding: 0.8rem 2rem;
+        min-width: 200px;
+    }
+    
+    .minimap {
+        width: 150px;
+        height: 150px;
+        top: 10px;
+        right: 10px;
+    }
+    
+    .health-bar {
+        width: 150px;
+        bottom: 30px;
+        left: 10px;
+    }
+    
+    .money {
+        font-size: 1.2rem;
+        top: 10px;
+        left: 10px;
+    }
+    
+    .wanted-level {
+        font-size: 1.2rem;
+        top: 50px;
+        left: 10px;
+    }
+}
+
+/* Инструкции по управлению */
+.controls-help {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.9rem;
+    text-align: center;
+    z-index: 150;
+}
+
+.controls-help.hidden {
+    display: none;
+}

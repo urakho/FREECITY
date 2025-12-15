@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FREEDOM CITY - CITY LIFE</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Главное меню -->
+    <div id="mainMenu" class="menu-container">
+        <div class="menu-background"></div>
+        <div class="menu-content">
+            <h1 class="game-title">FREEDOM CITY </h1>
+            <h2 class="game-subtitle">CITY LIFE</h2>
+            <div class="menu-buttons">
+                <button id="startButton" class="menu-btn">НОВАЯ ИГРА</button>
+                <button id="continueButton" class="menu-btn">ПРОДОЛЖИТЬ</button>
+                <button id="settingsButton" class="menu-btn">НАСТРОЙКИ</button>
+                <button id="exitButton" class="menu-btn">ВЫХОД</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Игровой экран -->
+    <div id="gameScreen" class="game-screen hidden">
+        <canvas id="gameCanvas"></canvas>
+        
+        <!-- HUD элементы -->
+        <div class="hud">
+            <div class="minimap"></div>
+            <div class="health-bar">
+                <div class="health-fill" id="healthFill"></div>
+            </div>
+            <div class="money" id="money">$1,000</div>
+            <div class="wanted-level" id="wantedLevel">
+                ★☆☆☆☆
+            </div>
+            <div id="fps-display" class="fps-display">FPS: --</div>
+            <button id="qualityToggle" class="quality-toggle">Низкое качество</button>
+        </div>
+
+        <!-- Инструкции по управлению -->
+        <div id="controlsHelp" class="controls-help">
+            WASD - движение | Мышь - поворот камеры | Пробел - прыжок | E - захват/выход из машины | Q+W - ускорение в машине | ESC - меню
+        </div>
+
+        <!-- Меню паузы -->
+        <div id="pauseMenu" class="pause-menu hidden">
+            <div class="pause-content">
+                <h2>ПАУЗА</h2>
+                <button id="resumeButton" class="pause-btn">ПРОДОЛЖИТЬ</button>
+                <button id="saveButton" class="pause-btn">СОХРАНИТЬ</button>
+                <button id="loadButton" class="pause-btn">ЗАГРУЗИТЬ</button>
+                <button id="mainMenuButton" class="pause-btn">ГЛАВНОЕ МЕНЮ</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Экран загрузки -->
+    <div id="loadingScreen" class="loading-screen hidden">
+        <div class="loading-content">
+            <h2>ЗАГРУЗКА...</h2>
+            <div class="loading-bar">
+                <div class="loading-progress" id="loadingProgress"></div>
+            </div>
+            <div class="loading-text" id="loadingText">Инициализация...</div>
+        </div>
+    </div>
+
+    <!-- Подключение библиотек -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="js/simple-game.js"></script>
+    <script src="js/city.js"></script>
+    <script src="js/vehicles.js"></script>
+    <script src="js/npcs.js"></script>
+    <script src="js/controls.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -4677,8 +4677,7 @@ class SimpleGameEngine {
         
         // Позиция игрока
         const playerPos = this.drivingVehicle ? this.drivingVehicle.group.position : this.player.group.position;
-        const playerRot = this.drivingVehicle ? this.drivingVehicle.group.rotation.y : this.player.group.rotation.y;
-
+        
         // Очищаем карту
         ctx.clearRect(0, 0, width, height);
         
@@ -4754,22 +4753,11 @@ class SimpleGameEngine {
             });
         }
 
-        // Рисуем игрока (центр)
-        ctx.fillStyle = '#00ff00'; // Зеленый
-        ctx.save();
-        ctx.translate(centerX, centerY);
-        ctx.rotate(playerRot); // Поворачиваем стрелку игрока
-        
-        // Рисуем стрелку
+        // Рисуем игрока (центр) - желтый кружок
+        ctx.fillStyle = '#FFFF00'; // Желтый
         ctx.beginPath();
-        ctx.moveTo(0, -5);
-        ctx.lineTo(4, 5);
-        ctx.lineTo(0, 3);
-        ctx.lineTo(-4, 5);
-        ctx.closePath();
+        ctx.arc(centerX, centerY, 4, 0, Math.PI * 2);
         ctx.fill();
-        
-        ctx.restore();
         
         // Восстанавливаем clip
         ctx.restore();
